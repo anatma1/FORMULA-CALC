@@ -334,7 +334,7 @@
 
 <div class="sticky-results">
     <div class="res-col">
-        <div class="res-item"><span>⚡ אנרגיה (קק"ל)</span><strong id="res_kcal">0.0</strong><small id="res_kcal_kg"></small></div>
+        <div class="res-item"><span>⚡ אנרגיה (קק"ל)</span><strong id="res_kcal">0</strong><small id="res_kcal_kg"></small></div>
     </div>
     <div class="divider"></div>
     <div class="res-col">
@@ -343,7 +343,6 @@
 </div>
 
 <script>
-// המאגר המעודכן - מותאם לדרישות המדויקות
 const db = [
     { id: "bm", name: "💗 חלב אם (68 קק\"ל / 1 ג' חלבון)", cat: "כללי", stock: 1, w: "-", r: "-", d: [[68, 1.0]], l: ["חלב אם"] },
     
@@ -471,7 +470,7 @@ function updateCard(f) {
         document.getElementById('conc_table').style.display = 'table';
         document.getElementById('row_neo').style.display = 'none';
         
-        document.getElementById('res_kcal').innerText = '0.0';
+        document.getElementById('res_kcal').innerText = '0';
         document.getElementById('res_pro').innerText = '0.0';
         document.getElementById('res_kcal_kg').innerText = '';
         document.getElementById('res_pro_kg').innerText = '';
@@ -552,14 +551,17 @@ function calcVol() {
         }
     }
     
-    let final_k = base_k + neo_k + b_k + c_k + r_k + dex_k + can_k + mct_k;
+    // חישוב הקלוריות מעוגל למספר שלם
+    let final_k = Math.round(base_k + neo_k + b_k + c_k + r_k + dex_k + can_k + mct_k);
+    // חלבון נשאר בדיוק עשרוני
     let final_p = base_p + neo_pro;
     
-    document.getElementById('res_kcal').innerText = final_k.toFixed(1);
+    document.getElementById('res_kcal').innerText = final_k;
     document.getElementById('res_pro').innerText = final_p.toFixed(1);
 
     if(weight > 0) {
-        document.getElementById('res_kcal_kg').innerText = "(" + (final_k/weight).toFixed(1) + " קק\"ל/ק\"ג)";
+        // גם כאן, קלוריות לק"ג מעוגלות למספר שלם
+        document.getElementById('res_kcal_kg').innerText = "(" + Math.round(final_k/weight) + " קק\"ל/ק\"ג)";
         document.getElementById('res_pro_kg').innerText = "(" + (final_p/weight).toFixed(1) + " ג'/ק\"ג)";
     } else { 
         document.getElementById('res_kcal_kg').innerText = ""; 
