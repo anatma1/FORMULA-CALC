@@ -124,4 +124,448 @@
         .info-header { background: #f8fafc; padding: 12px 15px; font-weight: 700; color: #475569; font-size: 0.9rem; border-bottom: 1px solid #e2e8f0; }
         
         table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-        th { padding: 10px 2px; font-size: 0.75rem; color: #647
+        th { padding: 10px 2px; font-size: 0.75rem; color: #64748b; border-bottom: 2px solid #f1f5f9; text-align: center; vertical-align: middle; background: #fff; line-height: 1.2; }
+        td { padding: 12px 2px; text-align: center; vertical-align: middle; font-size: 1rem; font-weight: 700; border-bottom: 1px solid #fff; }
+        
+        /* שורות חסומות (X) */
+        tr.disabled-row { background-color: #f8fafc; color: #94a3b8; }
+        tr.disabled-row input { cursor: not-allowed; opacity: 0.3; }
+        tr.disabled-row td { color: #cbd5e1; font-weight: 800; }
+        tr.disabled-row .col-conc { color: #94a3b8; }
+
+        .col-radio { width: 45px; } .col-conc { width: 65px; }
+        tr.row-0 { background-color: #f0fdf4; } tr.row-1 { background-color: #fefce8; } tr.row-2 { background-color: #fff1f2; } 
+        
+        /* --- העשרות --- */
+        .additives-section { background: #ffffff; padding: 10px 15px; }
+        
+        .additives-row { display: flex; border-bottom: 1px solid #f1f5f9; }
+        .additives-row:last-child { border-bottom: none; }
+        
+        .additive-item { width: 50%; padding: 10px 5px; display: flex; flex-direction: column; justify-content: flex-start; }
+        .additive-item:first-child { border-left: 1px solid #f8fafc; }
+        .additive-item.full-width { width: 100%; border-left: none; }
+
+        .additive-header { display: flex; align-items: center; cursor: pointer; margin-bottom: 5px; }
+        .additive-header input[type="checkbox"] { width: 20px; height: 20px; margin-left: 8px; cursor: pointer; accent-color: #3b82f6; flex-shrink: 0; border-radius: 4px; }
+        .additive-header label { font-size: 0.95rem; font-weight: 600; color: #334155; cursor: pointer; line-height: 1.1; }
+        .additive-header label small { display: block; font-size: 0.7rem; color: #94a3b8; font-weight: 400; margin-top: 2px; }
+        
+        .additive-input-area { display: none; width: 100%; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .add-input input, .add-input select { 
+            width: 100%; padding: 8px; border-radius: 10px; border: 1px solid #cbd5e1; 
+            text-align: center; font-weight: 700; font-size: 1.05rem; background: #fbfcfe; height: 40px; font-family: 'Calibri', sans-serif;
+        }
+
+        /* --- סיכום צף --- */
+        .sticky-results { 
+            position: fixed; bottom: 0; left: 0; right: 0; 
+            background: rgba(30, 41, 59, 0.95); backdrop-filter: blur(12px);
+            padding: 15px 0 30px 0;
+            border-top-left-radius: 28px; border-top-right-radius: 28px;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.25); 
+            z-index: 900; color: white;
+            display: flex; justify-content: center; align-items: center;
+            gap: 30px;
+        }
+        .res-col { display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 130px; }
+        .res-item span { display: block; font-size: 0.9rem; opacity: 0.9; margin-bottom: 4px; letter-spacing: 0.5px; }
+        .res-item strong { font-size: 1.8rem; color: #facc15; line-height: 1; font-weight: 800; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .res-item small { display: block; font-size: 0.95rem; color: #7dd3fc; font-weight: 600; margin-top: 6px; }
+        .divider { width: 1px; height: 50px; background: rgba(255,255,255,0.15); }
+
+        .footer { text-align: center; margin-top: 25px; font-size: 0.8rem; color: #94a3b8; padding-bottom: 10px; }
+        
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
+    </style>
+</head>
+<body onclick="closeDropdown(event)">
+<div class="container">
+    <div class="header"><h1>🧸 מחשבון פורמולות והעשרות 🍼</h1></div>
+
+    <div class="patient-data">
+        <div class="weight-row">
+            <div class="weight-field">
+                <label style="display:block; text-align:center; font-size:0.85rem; font-weight:700; color:#0369a1; margin-bottom:6px;">משקל (ק"ג)</label>
+                <input type="number" id="v_kg" placeholder="0" inputmode="decimal" oninput="calcVol()">
+            </div>
+        </div>
+        <div class="input-group">
+            <div class="input-field"><label>נפח ארוחה (מ"ל)</label><input type="number" id="v_ml" placeholder="0" inputmode="decimal" oninput="calcVol()"></div>
+            <div class="input-field"><label>מס' ארוחות</label><input type="number" id="v_num" placeholder="0" inputmode="decimal" oninput="calcVol()"></div>
+        </div>
+        <div class="total-vol-display">
+            <span>סה"כ נפח:</span>
+            <strong><span id="res_total_ml">0</span> מ"ל</strong>
+            <span id="ml_kg_span" style="display:none;" class="ml-kg-wrapper">
+                <span class="ml-kg-display">💧 (<span id="res_ml_kg">0</span> מ"ל/ק"ג)</span>
+            </span>
+        </div>
+    </div>
+    
+    <div style="display:flex; justify-content:center; gap:12px; margin-bottom:12px; font-size:0.75rem; color:#64748b; font-weight:600;">
+        <span style="display:flex; align-items:center;"><span class="stock-indicator stock-green"></span>&nbsp;קיים</span>
+        <span style="display:flex; align-items:center;"><span class="stock-indicator stock-yellow"></span>&nbsp;חסר זמנית</span>
+        <span style="display:flex; align-items:center;"><span class="stock-indicator stock-red"></span>&nbsp;חסר</span>
+    </div>
+
+    <div style="margin-bottom: 5px;">
+        <div style="text-align:center; margin-bottom:8px; font-size:0.9rem; font-weight:700; color:#64748b;">בחרי משפחת מוצרים:</div>
+        <div class="category-container">
+            <button class="cat-btn" onclick="filterCategory('כללי', this)">💗 חלב אם</button>
+            <button class="cat-btn" onclick="filterCategory('מטרנה', this)">מטרנה</button>
+            <button class="cat-btn" onclick="filterCategory('סימילאק', this)">סימילאק</button>
+            <button class="cat-btn" onclick="filterCategory('נוטרילון', this)">נוטרילון</button>
+            <button class="cat-btn" onclick="filterCategory('מיוחדות', this)">מיוחדות</button>
+        </div>
+    </div>
+
+    <div id="selectionList" class="selection-list"></div>
+
+    <div id="c" class="card">
+        <div class="selected-formula-title" id="selected_formula_name"></div>
+        
+        <div class="info-header" id="info_head">
+            <div style="display:flex; justify-content:space-between;">
+                <span>🥄 כפית: <span id="w"></span></span>
+                <span>💧 הכנה סטנדרטית: <span id="r"></span></span>
+            </div>
+        </div>
+        <table id="conc_table">
+            <thead>
+                <tr>
+                    <th class="col-radio">בחר</th>
+                    <th class="col-conc">ריכוז</th>
+                    <th>אנרגיה<br><small>(קק"ל/100 מ"ל)</small></th>
+                    <th>חלבון<br><small>(ג'/100 מ"ל)</small></th>
+                </tr>
+            </thead>
+            <tbody id="b"></tbody>
+        </table>
+
+        <div class="additives-section">
+            
+            <div class="additives-row" id="row_neo" style="display:none;">
+                <div class="additive-item full-width">
+                    <div class="additive-header" style="cursor:default;">
+                        <label>העשרת נאושור <small>אבקה לחיזוק חלב אם (לפי 5.13 קק"ל)</small></label>
+                    </div>
+                    <div style="margin-top:5px;">
+                        <div class="add-input">
+                            <select id="ad_neo_p" onchange="calcVol()" style="width:100%;">
+                                <option value="0">ללא</option><option value="1.5">1.5%</option><option value="4.5">4.5%</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="additives-row">
+                <div class="additive-item">
+                    <div class="additive-header">
+                        <input type="checkbox" id="cb_baby" onchange="toggleVis('wrap_baby', this)">
+                        <label for="cb_baby">בייביקלורי<small>3.84 קק"ל / 1 ג'</small></label>
+                    </div>
+                    <div class="additive-input-area" id="wrap_baby">
+                        <div class="add-input"><input type="number" id="ad_baby" placeholder="%" inputmode="decimal" oninput="calcVol()"></div>
+                    </div>
+                </div>
+                <div class="additive-item">
+                    <div class="additive-header">
+                        <input type="checkbox" id="cb_dex" onchange="toggleVis('wrap_dex', this)">
+                        <label for="cb_dex">סוכר ענבים<small>3.75 קק"ל / 1 ג'</small></label>
+                    </div>
+                    <div class="additive-input-area" id="wrap_dex">
+                        <div class="add-input"><input type="number" id="ad_dex" placeholder="%" inputmode="decimal" oninput="calcVol()"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="additives-row">
+                <div class="additive-item">
+                    <div class="additive-header">
+                        <input type="checkbox" id="cb_corn" onchange="toggleVis('wrap_corn', this)">
+                        <label for="cb_corn">קורנפלור<small>3.68 קק"ל / 1 ג'</small></label>
+                    </div>
+                    <div class="additive-input-area" id="wrap_corn">
+                        <div class="add-input"><input type="number" id="ad_corn" placeholder="%" inputmode="decimal" oninput="calcVol()"></div>
+                    </div>
+                </div>
+                <div class="additive-item">
+                    <div class="additive-header">
+                        <input type="checkbox" id="cb_rice" onchange="toggleVis('wrap_rice', this)">
+                        <label for="cb_rice">דייסת אורז<small>3.74 קק"ל / 1 ג'</small></label>
+                    </div>
+                    <div class="additive-input-area" id="wrap_rice">
+                        <div class="add-input"><input type="number" id="ad_rice" placeholder="%" inputmode="decimal" oninput="calcVol()"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="additives-row">
+                <div class="additive-item">
+                    <div class="additive-header">
+                        <input type="checkbox" id="cb_canola" onchange="toggleVis('wrap_canola', this)">
+                        <label for="cb_canola">שמן קנולה<small>9.0 קק"ל / 1 מ"ל</small></label>
+                    </div>
+                    <div class="additive-input-area" id="wrap_canola">
+                        <div class="add-input"><input type="number" id="ad_canola" placeholder="%" inputmode="decimal" oninput="calcVol()"></div>
+                    </div>
+                </div>
+                <div class="additive-item">
+                    <div class="additive-header">
+                        <input type="checkbox" id="cb_mct" onchange="toggleVis('wrap_mct', this)">
+                        <label for="cb_mct">שמן MCT<small>8.5 קק"ל / 1 מ"ל</small></label>
+                    </div>
+                    <div class="additive-input-area" id="wrap_mct">
+                        <div class="add-input"><input type="number" id="ad_mct" placeholder="%" inputmode="decimal" oninput="calcVol()"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="footer">ענת מסלנסקי, דיאטנית קלינית ©<br>מרכז שניידר לרפואת ילדים בישראל</div>
+</div>
+
+<div class="sticky-results">
+    <div class="res-col">
+        <div class="res-item"><span>⚡ אנרגיה (קק"ל)</span><strong id="res_kcal">0</strong><small id="res_kcal_kg"></small></div>
+    </div>
+    <div class="divider"></div>
+    <div class="res-col">
+        <div class="res-item"><span>🧬 חלבון (ג')</span><strong id="res_pro">0.0</strong><small id="res_pro_kg"></small></div>
+    </div>
+</div>
+
+<script>
+// המאגר המעודכן - מותאם לדרישות המדויקות
+const db = [
+    { id: "bm", name: "💗 חלב אם (68 קק\"ל / 1 ג' חלבון)", cat: "כללי", stock: 1, w: "-", r: "-", d: [[68, 1.0]], l: ["חלב אם"] },
+    
+    { id: "m_ex1", name: "מטרנה אקסטרה קר 1", cat: "מטרנה", stock: 1, w: "~9g", r: "1:60", d: [[66,1.4],[73,1.6],[88,1.87]], l: ["13.5%","15%","18%"] },
+    { id: "m_ex2", name: "מטרנה אקסטרה קר 2", cat: "מטרנה", stock: 1, w: "~9g", r: "1:60", d: [[66,1.45],[73,1.6],[88,1.93]], l: ["13.5%","15%","18%"] },
+    { id: "m_ex3", name: "מטרנה אקסטרה קר 3", cat: "מטרנה", stock: 1, w: "~9g", r: "1:60", d: [[66,1.6],[73,1.8],[88,2.13]], l: ["13.5%","15%","18%"] },
+    { id: "m_h1", name: "מטרנה חלבי 1", cat: "מטרנה", stock: 0, w: "~9g", r: "1:60", d: [[68,1.45],[76,1.6],[91,1.93]], l: ["13.5%","15%","18%"] },
+    { id: "m_h2", name: "מטרנה חלבי 2", cat: "מטרנה", stock: 0, w: "~9g", r: "1:60", d: [[69,1.58],[77,1.8],[92,2.11]], l: ["13.5%","15%","18%"] },
+    { id: "m_h3", name: "מטרנה חלבי 3", cat: "מטרנה", stock: 0, w: "~9g", r: "1:60", d: [[66,1.6],[73,1.8],[88,2.13]], l: ["13.5%","15%","18%"] },
+    { id: "m_gp1", name: "מטרנה גולד פרו 1", cat: "מטרנה", stock: 0, w: "~9g", r: "1:60", d: [[67,1.4],[74,1.6],[89,1.87]], l: ["13.5%","15%","18%"] },
+    { id: "m_gp2", name: "מטרנה גולד פרו 2", cat: "מטרנה", stock: 0, w: "~9g", r: "1:60", d: [[67,1.3],[74,1.4],[89,1.73]], l: ["13.5%","15%","18%"] },
+    { id: "m_gp3", name: "מטרנה גולד פרו 3", cat: "מטרנה", stock: 0, w: "~9g", r: "1:60", d: [[64,1.4],[71,1.6],[85,1.87]], l: ["13.5%","15%","18%"] },
+    { id: "m_g1", name: "מטרנה גולד 1", cat: "מטרנה", stock: 0, w: "~9g", r: "1:60", d: [[68,1.4],[76,1.6],[91,1.87]], l: ["13.5%","15%","18%"] },
+    { id: "m_g2", name: "מטרנה גולד 2", cat: "מטרנה", stock: 0, w: "~9g", r: "1:60", d: [[67,1.3],[74,1.4],[89,1.73]], l: ["13.5%","15%","18%"] },
+    { id: "m_g3", name: "מטרנה גולד 3", cat: "מטרנה", stock: 0, w: "~9g", r: "1:60", d: [[65,1.4],[72,1.6],[87,1.87]], l: ["13.5%","15%","18%"] },
+    { id: "m_exm1", name: "מטרנה אקסטרה-קר מהדרין 1", cat: "מטרנה", stock: 0, w: "~9g", r: "1:60", d: [[66,1.5],[73,1.7],[88,2.0]], l: ["13.5%","15%","18%"] },
+    { id: "m_exm2", name: "מטרנה אקסטרה-קר מהדרין 2", cat: "מטרנה", stock: 0, w: "~9g", r: "1:60", d: [[67,1.5],[74,1.7],[89,2.0]], l: ["13.5%","15%","18%"] },
+    { id: "m_exm3", name: "מטרנה אקסטרה-קר מהדרין 3", cat: "מטרנה", stock: 0, w: "~9g", r: "1:60", d: [[66,1.6],[73,1.8],[88,2.13]], l: ["13.5%","15%","18%"] },
+    { id: "m_m1", name: "מטרנה מהדרין 1", cat: "מטרנה", stock: 1, w: "~9g", r: "1:60", d: [[68,1.5],[76,1.7],[91,2.0]], l: ["13.5%","15%","18%"] },
+    { id: "m_m2", name: "מטרנה מהדרין 2", cat: "מטרנה", stock: 1, w: "~9g", r: "1:60", d: [[67,1.45],[74,1.6],[89,1.93]], l: ["13.5%","15%","18%"] },
+    { id: "m_m3", name: "מטרנה מהדרין 3", cat: "מטרנה", stock: 1, w: "~9g", r: "1:60", d: [[66,1.59],[73,1.8],[88,2.12]], l: ["13.5%","15%","18%"] },
+    { id: "m_ar", name: "מטרנה AR", cat: "מטרנה", stock: 1, w: "~9g", r: "1:60", d: [[67,1.44],[74,1.6],[89,1.92]], l: ["13.5%","15%","18%"] },
+    { id: "m_com", name: "מטרנה COMFORT", cat: "מטרנה", stock: 0, w: "~9g", r: "1:60", d: [[67,1.4],[74,1.6],[89,1.87]], l: ["13.5%","15%","18%"] },
+    { id: "m_sen", name: "מטרנה סנסיטיב", cat: "מטרנה", stock: 1, w: "~9.6g", r: "1:60", d: [[0,0],[73,1.9],[88,2.28]], l: ["X","15%","18%"] },
+    { id: "m_veg1", name: "מטרנה צמחית (0-שנה)", cat: "מטרנה", stock: 1, w: "~9g", r: "1:60", d: [[66,1.8],[73,2.0],[88,2.4]], l: ["13.5%","15%","18%"] },
+    { id: "m_veg2", name: "מטרנה צמחית (שנה+)", cat: "מטרנה", stock: 1, w: "~9g", r: "1:60", d: [[66,1.8],[73,2.0],[88,2.4]], l: ["13.5%","15%","18%"] },
+
+    // סימילאק
+    { id: "s_gp1", name: "סימילאק גולד פלוס 1", cat: "סימילאק", stock: 0, w: "8.4g", r: "1:60", d: [[65,1.32],[72,1.5],[87,1.76]], l: ["13.5%","15%","18%"] },
+    { id: "s_gp2", name: "סימילאק גולד פלוס 2", cat: "סימילאק", stock: 0, w: "8.8g", r: "1:60", d: [[0,0],[74,1.5],[89,1.84]], l: ["X","15%","18%"] },
+    { id: "s_gp3", name: "סימילאק גולד פלוס 3", cat: "סימילאק", stock: 0, w: "8.8g", r: "1:60", d: [[0,0],[74,1.5],[89,1.83]], l: ["X","15%","18%"] },
+    { id: "s_g1", name: "סימילאק גולד 1", cat: "סימילאק", stock: 1, w: "8.3g", r: "1:60", d: [[64,1.32],[71,1.5],[85,1.76]], l: ["13.5%","15%","18%"] },
+    { id: "s_g2_fix", name: "סימילאק גולד 2", cat: "סימילאק", stock: 1, w: "8.8g", r: "1:60", d: [[0,0],[75,2.34],[90,2.81]], l: ["X","15%","18%"] },
+    { id: "s_g3_fix", name: "סימילאק גולד 3", cat: "סימילאק", stock: 1, w: "8.8g", r: "1:60", d: [[0,0],[73,2.77],[88,3.32]], l: ["X","15%","18%"] },
+    { id: "s_m1", name: "סימילאק למהדרין 1", cat: "סימילאק", stock: 1, w: "8.8g", r: "1:60", d: [[68,1.5],[76,1.7],[91,2.0]], l: ["13.5%","15%","18%"] },
+    { id: "s_m2", name: "סימילאק למהדרין 2", cat: "סימילאק", stock: 1, w: "10.2g", r: "1:60", d: [[0,0],[73.1,2.8],[88,3.36]], l: ["X","15%","18%"] },
+    { id: "s_m3", name: "סימילאק למהדרין 3", cat: "סימילאק", stock: 1, w: "10.2g", r: "1:60", d: [[0,0],[73.8,2.8],[89,3.36]], l: ["X","15%","18%"] },
+    { id: "s_veg1", name: "סימילאק צמחי 1", cat: "סימילאק", stock: 1, w: "~9g", r: "1:60", d: [[68,1.7],[76,1.9],[91,2.27]], l: ["13.5%","15%","18%"] },
+    { id: "s_veg2", name: "סימילאק צמחי 2", cat: "סימילאק", stock: 1, w: "9.8g", r: "1:60", d: [[69,2.16],[77,2.4],[92,2.88]], l: ["13.5%","15%","18%"] },
+    { id: "s_com1", name: "סימילאק גולד קומפורט 1", cat: "סימילאק", stock: 1, w: "8.9g", r: "1:60", d: [[68,1.56],[76,1.7],[91,2.08]], l: ["13.5%","15%","18%"] },
+    { id: "s_com2", name: "סימילאק גולד קומפורט 2", cat: "סימילאק", stock: 1, w: "10.3g", r: "1:60", d: [[0,0],[74,2.35],[89,2.82]], l: ["X","15%","18%"] },
+    { id: "s_ar", name: "סימילאק AR", cat: "סימילאק", stock: 1, w: "8.8g", r: "1:60", d: [[68,1.45],[76,1.6],[91,1.93]], l: ["13.5%","15%","18%"] },
+    { id: "s_neo", name: "סימילאק גולד נאושור", cat: "סימילאק", stock: 1, w: "9.8g", r: "1:60", d: [[0,0],[74,1.93],[89,2.32]], l: ["X","15%","18%"] },
+
+    // נוטרילון
+    { id: "n1", name: "נוטרילון 1", cat: "נוטרילון", stock: 1, w: "4.5g", r: "1:30", d: [[65,1.3],[72,1.44],[87,1.73]], l: ["13.5%","15%","18%"] },
+    { id: "n2", name: "נוטרילון 2", cat: "נוטרילון", stock: 1, w: "4.9g", r: "1:30", d: [[67,1.4],[74,1.56],[89,1.87]], l: ["13.5%","15%","18%"] },
+    { id: "n3", name: "נוטרילון 3", cat: "נוטרילון", stock: 1, w: "4.8g", r: "1:30", d: [[63,1.5],[70,1.67],[84,2.0]], l: ["13.5%","15%","18%"] },
+    { id: "n_com", name: "נוטרילון קומפורט", cat: "נוטרילון", stock: 0, w: "4.4g", r: "1:30", d: [[65,1.5],[72,1.67],[87,2.0]], l: ["13.5%","15%","18%"] },
+    { id: "n_ll", name: "נוטרילון ללא לקטוז", cat: "נוטרילון", stock: 1, w: "4.3g", r: "1:30", d: [[66,1.3],[73,1.44],[88,1.73]], l: ["13.5%","15%","18%"] },
+    { id: "n_p1", name: "נוטרילון פפטי 1", cat: "נוטרילון", stock: 0, w: "4.5g", r: "1:30", d: [[67,1.6],[74,1.78],[89,2.13]], l: ["13.5%","15%","18%"] },
+    { id: "n_p2", name: "נוטרילון פפטי 2", cat: "נוטרילון", stock: 0, w: "4.8g", r: "1:30", d: [[68,1.6],[76,1.78],[91,2.13]], l: ["13.5%","15%","18%"] },
+    { id: "n_pj", name: "נוטרילון פפטי ג'וניור", cat: "נוטרילון", stock: 1, w: "4.3g", r: "1:30", d: [[66,1.8],[73,2.0],[88,2.4]], l: ["13.5%","15%","18%"] },
+    { id: "n_ar", name: "נוטרילון AR", cat: "נוטרילון", stock: 1, w: "4.4g", r: "1:30", d: [[65,1.6],[72,1.78],[87,2.13]], l: ["13.5%","15%","18%"] },
+
+    // מיוחדות
+    { id: "neo_lcp", name: "נאוקייט LCP", cat: "מיוחדות", stock: 1, w: "4.5g", r: "1:30", d: [[67,1.8],[74,2.0],[89,2.4]], l: ["13.5%","15%","18%"] },
+    { id: "neo_jr", name: "נאוקייט ג'וניור", cat: "מיוחדות", stock: 1, w: "7.3g", r: "1:30*", d: [[69,1.9],[100,2.8],[126,3.5]], l: ["14.5%","21.1%*","26.5%"] },
+    { id: "mono", name: "מונוגן", cat: "מיוחדות", stock: 1, w: "5.6g", r: "1:30", d: [[74,2.2],[88,2.6],[97,2.9]], l: ["16.8%","20.0%","22.0%"] },
+    { id: "nutren", name: "נוטרן ג'וניור (אבקה)", cat: "מיוחדות", stock: 1, w: "7.8g", r: "1:30", d: [[0,0],[101,3.0],[147,4.4]], l: ["X","22.0%","32.0%"] }
+];
+
+let selectedFormulaId = null;
+const defaultLabels = ["13.5%", "15%", "18%"];
+
+function filterCategory(cat, btn) {
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    let list = document.getElementById('selectionList');
+    list.innerHTML = '';
+    
+    let filtered = db.filter(item => {
+        if(cat === 'כללי') return item.cat === 'כללי';
+        if(cat === 'מיוחדות') return item.cat === 'מיוחדות';
+        return item.cat === cat;
+    });
+
+    filtered.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'list-item';
+        
+        let stockHtml = '';
+        if (item.id !== 'bm') {
+            let colorClass = item.stock === 1 ? 'stock-green' : item.stock === 2 ? 'stock-yellow' : 'stock-red';
+            stockHtml = `<span class="stock-indicator ${colorClass}"></span>`;
+        }
+
+        div.innerHTML = `<span>${item.name}</span>${stockHtml}`;
+        div.onclick = () => {
+            selectedFormulaId = item.id;
+            list.classList.remove('show');
+            resetAdditives();
+            updateCard(item);
+        };
+        list.appendChild(div);
+    });
+
+    list.classList.add('show');
+}
+
+function resetAdditives() {
+    document.querySelectorAll('.additives-section input[type="checkbox"]').forEach(el => {
+        el.checked = false;
+        let targetId = el.getAttribute('onchange').match(/'([^']+)'/)[1];
+        document.getElementById(targetId).style.display = 'none';
+    });
+    document.querySelectorAll('.additives-section input[type="number"]').forEach(el => el.value = '');
+    document.getElementById('ad_neo_p').value = 0;
+}
+
+function updateCard(f) {
+    document.getElementById('c').style.display = 'block';
+    document.getElementById('selected_formula_name').innerText = f.name;
+    
+    if(f.id === "bm") {
+        document.getElementById('info_head').style.display = 'none';
+        document.getElementById('conc_table').style.display = 'none';
+        document.getElementById('row_neo').style.display = 'flex';
+        calcVol(); 
+    } else {
+        document.getElementById('info_head').style.display = 'block';
+        document.getElementById('w').innerText = f.w;
+        document.getElementById('r').innerText = f.r;
+        document.getElementById('conc_table').style.display = 'table';
+        document.getElementById('row_neo').style.display = 'none';
+        
+        document.getElementById('res_kcal').innerText = '0';
+        document.getElementById('res_pro').innerText = '0.0';
+        document.getElementById('res_kcal_kg').innerText = '';
+        document.getElementById('res_pro_kg').innerText = '';
+        
+        let radios = document.querySelectorAll('input[name="conc"]');
+        radios.forEach(r => r.checked = false);
+    }
+
+    let b = "";
+    let labels = f.l || defaultLabels;
+    
+    f.d.forEach((r, i) => {
+        let isX = labels[i] === "X" || r[0] === 0;
+        let rowClass = `row-${i} ${isX ? 'disabled-row' : ''}`;
+        let radioHtml = isX ? `<input type="radio" disabled>` : `<input type="radio" name="conc" value="${i}" onclick="calcVol()">`;
+        let valKcal = isX ? "X" : r[0];
+        let valPro = isX ? "X" : r[1];
+        let labelText = isX ? "X" : labels[i];
+        
+        b += `<tr class="${rowClass}"><td class="col-radio">${radioHtml}</td><td class="col-conc">${labelText}</td><td>${valKcal}</td><td>${valPro}</td></tr>`;
+    });
+    document.getElementById('b').innerHTML = b;
+}
+
+function toggleVis(id, cb) {
+    document.getElementById(id).style.display = cb.checked ? 'block' : 'none';
+    calcVol();
+}
+
+function calcVol() {
+    let ml = parseFloat(document.getElementById('v_ml').value) || 0;
+    let num = parseFloat(document.getElementById('v_num').value) || 0;
+    let weight = parseFloat(document.getElementById('v_kg').value) || 0;
+    let total_ml = ml * num;
+    document.getElementById('res_total_ml').innerText = total_ml;
+
+    if(weight > 0 && total_ml > 0) {
+        document.getElementById('res_ml_kg').innerText = Math.round(total_ml / weight);
+        document.getElementById('ml_kg_span').style.display = 'inline-flex';
+    } else { document.getElementById('ml_kg_span').style.display = 'none'; }
+
+    let neo_p = parseFloat(document.getElementById('ad_neo_p').value) || 0;
+    let neo_k = (neo_p * total_ml / 100) * 5.13;
+    let neo_pro = (neo_p * total_ml / 100) * 0.134;
+
+    let b_p = document.getElementById('cb_baby').checked ? (parseFloat(document.getElementById('ad_baby').value) || 0) : 0;
+    let b_k = (b_p * total_ml / 100) * 3.84;
+    
+    let c_p = document.getElementById('cb_corn').checked ? (parseFloat(document.getElementById('ad_corn').value) || 0) : 0;
+    let c_k = (c_p * total_ml / 100) * 3.68;
+    
+    let r_p = document.getElementById('cb_rice').checked ? (parseFloat(document.getElementById('ad_rice').value) || 0) : 0;
+    let r_k = (r_p * total_ml / 100) * 3.74;
+
+    let dex_p = document.getElementById('cb_dex').checked ? (parseFloat(document.getElementById('ad_dex').value) || 0) : 0;
+    let dex_k = (dex_p * total_ml / 100) * 3.75;
+
+    let can_p = document.getElementById('cb_canola').checked ? (parseFloat(document.getElementById('ad_canola').value) || 0) : 0;
+    let can_k = (can_p * total_ml / 100) * 9;
+    
+    let mct_p = document.getElementById('cb_mct').checked ? (parseFloat(document.getElementById('ad_mct').value) || 0) : 0;
+    let mct_k = (mct_p * total_ml / 100) * 8.5;
+
+    let base_k = 0, base_p = 0;
+    if(selectedFormulaId) {
+        let formula = db.find(x => x.id === selectedFormulaId);
+        
+        if (selectedFormulaId === 'bm') {
+            base_k = (68 * total_ml) / 100;
+            base_p = (1.0 * total_ml) / 100;
+        } else {
+            let sel = document.querySelector('input[name="conc"]:checked');
+            if(sel){
+                let r = formula.d[sel.value];
+                base_k = (r[0] * total_ml) / 100; 
+                base_p = (r[1] * total_ml) / 100;
+            }
+        }
+    }
+    
+    let final_k = Math.round(base_k + neo_k + b_k + c_k + r_k + dex_k + can_k + mct_k);
+    let final_p = base_p + neo_pro;
+    
+    document.getElementById('res_kcal').innerText = final_k;
+    document.getElementById('res_pro').innerText = final_p.toFixed(1);
+
+    if(weight > 0) {
+        document.getElementById('res_kcal_kg').innerText = "(" + Math.round(final_k/weight) + " קק\"ל/ק\"ג)";
+        document.getElementById('res_pro_kg').innerText = "(" + (final_p/weight).toFixed(1) + " ג'/ק\"ג)";
+    } else { 
+        document.getElementById('res_kcal_kg').innerText = ""; 
+        document.getElementById('res_pro_kg').innerText = ""; 
+    }
+}
+</script>
+</body>
+</html>
