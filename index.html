@@ -212,6 +212,7 @@
         <span style="display:flex; align-items:center;"><span class="stock-indicator stock-red"></span>&nbsp;חסר</span>
     </div>
 
+    <!-- בחירת קטגוריות -->
     <div style="margin-bottom: 5px;">
         <div style="text-align:center; margin-bottom:8px; font-size:0.9rem; font-weight:700; color:#64748b;">בחרי משפחת מוצרים:</div>
         <div class="category-container">
@@ -223,9 +224,11 @@
         </div>
     </div>
 
+    <!-- רשימת פורמולות נפתחת -->
     <div id="selectionList" class="selection-list"></div>
 
     <div id="c" class="card">
+        <!-- כותרת בולטת לפורמולה הנבחרת -->
         <div class="selected-formula-title" id="selected_formula_name"></div>
         
         <div class="info-header" id="info_head">
@@ -234,6 +237,7 @@
                 <span>💧 הכנה סטנדרטית: <span id="r"></span></span>
             </div>
         </div>
+        <!-- טבלה -->
         <table id="conc_table">
             <thead>
                 <tr>
@@ -388,9 +392,9 @@ const db = [
     { id: "s_neo", name: "סימילאק גולד נאושור", cat: "סימילאק", stock: 1, w: "9.8g", r: "1:60", d: [[0,0],[74,1.93],[89,2.32]], l: ["X","15%","18%"] },
 
     // נוטרילון
-    { id: "n1", name: "נוטרילון 1", cat: "נוטרילון", stock: 1, w: "4.5g", r: "1:30", d: [[65,1.3],[72,1.44],[87,1.73]], l: ["13.5%","15%","18%"] },
+    { id: "n1", name: "נוטרילון 1", cat: "נוטרילון", stock: 0, w: "4.5g", r: "1:30", d: [[65,1.3],[72,1.44],[87,1.73]], l: ["13.5%","15%","18%"] },
     { id: "n2", name: "נוטרילון 2", cat: "נוטרילון", stock: 1, w: "4.9g", r: "1:30", d: [[67,1.4],[74,1.56],[89,1.87]], l: ["13.5%","15%","18%"] },
-    { id: "n3", name: "נוטרילון 3", cat: "נוטרילון", stock: 1, w: "4.8g", r: "1:30", d: [[63,1.5],[70,1.67],[84,2.0]], l: ["13.5%","15%","18%"] },
+    { id: "n3", name: "נוטרילון 3", cat: "נוטרילון", stock: 0, w: "4.8g", r: "1:30", d: [[63,1.5],[70,1.67],[84,2.0]], l: ["13.5%","15%","18%"] },
     { id: "n_com", name: "נוטרילון קומפורט", cat: "נוטרילון", stock: 0, w: "4.4g", r: "1:30", d: [[65,1.5],[72,1.67],[87,2.0]], l: ["13.5%","15%","18%"] },
     { id: "n_ll", name: "נוטרילון ללא לקטוז", cat: "נוטרילון", stock: 0, w: "4.3g", r: "1:30", d: [[66,1.3],[73,1.44],[88,1.73]], l: ["13.5%","15%","18%"] },
     { id: "n_p1", name: "נוטרילון פפטי 1", cat: "נוטרילון", stock: 0, w: "4.5g", r: "1:30", d: [[67,1.6],[74,1.78],[89,2.13]], l: ["13.5%","15%","18%"] },
